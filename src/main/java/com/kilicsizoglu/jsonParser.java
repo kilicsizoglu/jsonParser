@@ -184,15 +184,14 @@ public class jsonParser {
     }
 
     public void mod6() {
-        if (mod == 5) {
+        mod = 6;
+        if (processBlock == true || arrayProcessBlock == true) {
+            buffer.append(ch);
+        }
+        else if (mod == 5 && (processBlock != true && arrayProcessBlock != true)) {
             objectData = buffer.toString();
             jsonData.put(data, objectData);
             buffer = new StringBuffer();
-        } else {
-            mod = 6;
-            if (processBlock == true || arrayProcessBlock == true) {
-                buffer.append(ch);
-            }
         }
     }
 
