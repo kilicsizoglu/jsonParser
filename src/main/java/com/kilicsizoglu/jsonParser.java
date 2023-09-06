@@ -2,6 +2,7 @@ package com.kilicsizoglu;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 import java.util.Map;
 
 public class jsonParser {
@@ -11,6 +12,9 @@ public class jsonParser {
     private int objectSize = 0;
     private String data = "";
     private boolean processBlock = false;
+    private boolean arrayProcessBlock = false;
+    private String objectData = "";
+    private List<String> listData;
     public Map<String, Object> jsonData;
     private StringReader reader;
     private StringBuffer buffer;
@@ -123,6 +127,17 @@ public class jsonParser {
         mod = 2;
         if (processBlock == true) {
             buffer.append(ch);
+        } else {
+            objectSize--;
+            if (buffer.length() == 0) {
+                data = String.valueOf(i);
+            } else {
+                data = buffer.toString();
+            }
+            buffer = new StringBuffer();
+            if (objectSize == 0) {
+                arrayProcessBlock = false;
+            }
         }
     }
 
@@ -130,13 +145,34 @@ public class jsonParser {
         mod = 3;
         if (processBlock == true) {
             buffer.append(ch);
+        } else {
+            objectSize++;
+            arrayProcessBlock = true;
+            jsonData.put(data, buffer.toString());
+            buffer = new StringBuffer();
+        }
+        if (mod == 4) {
+            if (data == "") {
+                jsonData.put(String.valueOf(i), buffer.toString());
+                i++;
+            } else {
+                jsonData.put(data, buffer.toString());
+            }
         }
     }
 
     public void mod4() {
-        mod = 4;
-        if (processBlock == true) {
-            buffer.append(ch);
+        if (mod == 5) {
+            listData.add(buffer.toString());
+            buffer = new StringBuffer();
+        } else {
+            mod = 4;
+            if (processBlock == true) {
+                buffer.append(ch);
+            }
+            if (arrayProcessBlock == true) {
+                data = buffer.toString();
+            }
         }
     }
 
@@ -148,9 +184,15 @@ public class jsonParser {
     }
 
     public void mod6() {
-        mod = 6;
-        if (processBlock == true) {
-            buffer.append(ch);
+        if (mod == 5) {
+            objectData = buffer.toString();
+            jsonData.put(data, objectData);
+            buffer = new StringBuffer();
+        } else {
+            mod = 6;
+            if (processBlock == true || arrayProcessBlock == true) {
+                buffer.append(ch);
+            }
         }
     }
 

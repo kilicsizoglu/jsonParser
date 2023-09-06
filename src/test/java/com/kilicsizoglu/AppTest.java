@@ -21,5 +21,8 @@ public class AppTest
         jsonParser parser = new jsonParser(json);
         Map<String, Object> object = parser.parse();
         String data = (String) object.get("0");
+        parser = new jsonParser(data);
+        String quizData = (String) object.get("quiz");
+
     }
 }
