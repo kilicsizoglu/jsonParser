@@ -22,7 +22,16 @@ public class AppTest
         Map<String, Object> object = parser.parse();
         String data = (String) object.get("0");
         parser = new jsonParser(data);
+        object = parser.parse();
         String quizData = (String) object.get("quiz");
-
+        parser = new jsonParser(quizData);
+        object = parser.parse();
+        String sportData = (String) object.get("sport");
+        parser = new jsonParser(sportData);
+        object = parser.parse();
+        String q1 = (String) object.get("q1");
+        parser = new jsonParser(q1);
+        object = parser.parse();
+        String question = (String) object.get("question");
     }
 }

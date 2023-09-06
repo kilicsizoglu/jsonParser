@@ -13,6 +13,7 @@ public class jsonParser {
     private String data = "";
     private boolean processBlock = false;
     private boolean arrayProcessBlock = false;
+    private boolean StringReadMode = false;
     private String objectData = "";
     private List<String> listData;
     public Map<String, Object> jsonData;
@@ -21,8 +22,9 @@ public class jsonParser {
 
     public jsonParser(String json) {
         jsonData = new java.util.HashMap<String, Object>();
-        reader = new StringReader(json);
+        reader = new StringReader(json.trim());
         buffer = new StringBuffer();
+        listData = new java.util.ArrayList<String>();
     }
 
     public Map<String, Object> parse() throws IOException {
@@ -89,11 +91,15 @@ public class jsonParser {
     public void mod0() {
         mod = 0;
         objectSize--;
-        if (processBlock == true && objectSize != 1) {
+        if (processBlock == true) {
             buffer.append(ch);
         }
         if (objectSize == 0) {
             processBlock = false;
+            objectSize = 0;
+        }
+        if (objectSize == 0 && processBlock == false) {
+            buffer.deleteCharAt(buffer.length() - 1);
         }
         if (objectSize == 0) {
             if (data == "") {
@@ -111,15 +117,12 @@ public class jsonParser {
     public void mod1() {
         mod = 1;
         objectSize++;
-        if (objectSize == 1) {
-            processBlock = true;
-        }
-        if (processBlock == true && objectSize != 1) {
+        if (processBlock == true) {
             buffer.append(ch);
         }
-        if (processBlock != true && objectSize == 0) {
-            data = buffer.toString();
-        }
+        // if (processBlock != true) {
+        //     processBlock = true;
+        // }
     }
 
     // dizi modu
@@ -127,68 +130,61 @@ public class jsonParser {
         mod = 2;
         if (processBlock == true) {
             buffer.append(ch);
-        } else {
-            objectSize--;
-            if (buffer.length() == 0) {
-                data = String.valueOf(i);
-            } else {
-                data = buffer.toString();
-            }
-            buffer = new StringBuffer();
-            if (objectSize == 0) {
-                arrayProcessBlock = false;
-            }
         }
+        //  else if (arrayProcessBlock != true) {
+        //     arrayProcessBlock = true;
+        //     objectSize++;
+        // }
     }
 
     public void mod3() {
         mod = 3;
         if (processBlock == true) {
             buffer.append(ch);
-        } else {
-            objectSize++;
-            arrayProcessBlock = true;
-            jsonData.put(data, buffer.toString());
-            buffer = new StringBuffer();
-        }
-        if (mod == 4) {
-            if (data == "") {
-                jsonData.put(String.valueOf(i), buffer.toString());
-                i++;
-            } else {
-                jsonData.put(data, buffer.toString());
-            }
-        }
+        } 
+        // objectSize--;
+        // if (arrayProcessBlock == true && objectSize == 0) {
+        //     arrayProcessBlock = false;
+        // }
+        // if (objectSize == 0 && arrayProcessBlock == true) {
+        //     jsonData.put(objectData, listData);
+        // }
     }
 
     public void mod4() {
-        if (mod == 5) {
-            listData.add(buffer.toString());
-            buffer = new StringBuffer();
-        } else {
-            mod = 4;
-            if (processBlock == true) {
-                buffer.append(ch);
-            }
-            if (arrayProcessBlock == true) {
-                data = buffer.toString();
-            }
-        }
-    }
-
-    public void mod5() {
-        mod = 5;
         if (processBlock == true) {
             buffer.append(ch);
         }
     }
 
-    public void mod6() {
-        mod = 6;
-        if (processBlock == true || arrayProcessBlock == true) {
+    public void mod5() {
+        mod = 5;
+        if (objectSize > 1 || processBlock == true) {
             buffer.append(ch);
         }
-        else if (mod == 5 && (processBlock != true && arrayProcessBlock != true)) {
+    }
+
+    // todo : degisken degerini json data ya ekle ve buffer bos olma sorununu coz
+    public void mod6() {
+        // if (arrayProcessBlock == false) {
+        //     listData.add(data);
+        //     buffer = new StringBuffer();
+        // }
+        if (mod == 11 && processBlock != true && StringReadMode != true) {
+            data = buffer.toString();
+            buffer = new StringBuffer();
+        }
+        if (StringReadMode == true && processBlock != true) {
+            StringReadMode = false;
+        }
+        if (mod == 5 && processBlock == false) {
+            StringReadMode = true;
+        }
+        mod = 6;
+        if (processBlock == true) {
+            buffer.append(ch);
+        }
+        if (StringReadMode == true) {
             objectData = buffer.toString();
             jsonData.put(data, objectData);
             buffer = new StringBuffer();
@@ -226,6 +222,7 @@ public class jsonParser {
     public void modDafault() {
         mod = 11;
         buffer.append(ch);
+
     }
 
 }
