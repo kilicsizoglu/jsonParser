@@ -96,7 +96,6 @@ public class jsonParser {
         }
         if (objectSize == 0) {
             processBlock = false;
-            objectSize = 0;
         }
         if (objectSize == 0 && processBlock == false) {
             buffer.deleteCharAt(buffer.length() - 1);
@@ -120,9 +119,9 @@ public class jsonParser {
         if (processBlock == true) {
             buffer.append(ch);
         }
-        // if (processBlock != true) {
-        //     processBlock = true;
-        // }
+        if (processBlock != true) {
+            processBlock = true;
+        }
     }
 
     // dizi modu
@@ -174,21 +173,21 @@ public class jsonParser {
             data = buffer.toString();
             buffer = new StringBuffer();
         }
-        if (StringReadMode == true && processBlock != true) {
-            StringReadMode = false;
-        }
-        if (mod == 5 && processBlock == false) {
-            StringReadMode = true;
-        }
+        // if (StringReadMode == true && processBlock != true) {
+        //     StringReadMode = false;
+        // }
+        // if (mod == 5 && processBlock == false && arrayProcessBlock == false) {
+        //     StringReadMode = true;
+        // }
         mod = 6;
         if (processBlock == true) {
             buffer.append(ch);
         }
-        if (StringReadMode == true) {
-            objectData = buffer.toString();
-            jsonData.put(data, objectData);
-            buffer = new StringBuffer();
-        }
+        // if (StringReadMode == true) {
+        //     objectData = buffer.toString();
+        //     jsonData.put(data, objectData);
+        //     buffer = new StringBuffer();
+        // }
     }
 
     public void mod7() {
