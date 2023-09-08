@@ -1,6 +1,7 @@
 package com.kilicsizoglu;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -33,5 +34,7 @@ public class AppTest
         parser = new jsonParser(q1);
         object = parser.parse();
         String question = (String) object.get("question");
+        String answer = (String) object.get("answer");
+        List<String> options =  (List<String>) object.get("options");
     }
 }

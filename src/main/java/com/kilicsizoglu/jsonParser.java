@@ -130,10 +130,6 @@ public class jsonParser {
         if (processBlock == true) {
             buffer.append(ch);
         }
-        //  else if (arrayProcessBlock != true) {
-        //     arrayProcessBlock = true;
-        //     objectSize++;
-        // }
     }
 
     public void mod3() {
@@ -141,13 +137,6 @@ public class jsonParser {
         if (processBlock == true) {
             buffer.append(ch);
         } 
-        // objectSize--;
-        // if (arrayProcessBlock == true && objectSize == 0) {
-        //     arrayProcessBlock = false;
-        // }
-        // if (objectSize == 0 && arrayProcessBlock == true) {
-        //     jsonData.put(objectData, listData);
-        // }
     }
 
     public void mod4() {
@@ -165,29 +154,23 @@ public class jsonParser {
 
     // todo : degisken degerini json data ya ekle ve buffer bos olma sorununu coz
     public void mod6() {
-        // if (arrayProcessBlock == false) {
-        //     listData.add(data);
-        //     buffer = new StringBuffer();
-        // }
+        if (mod == 5 && processBlock != true && arrayProcessBlock != true && StringReadMode != true) {
+            StringReadMode = true;
+            buffer = new StringBuffer();
+        }
+        if (mod == 6 && processBlock != true && arrayProcessBlock != true && StringReadMode == true) {
+            StringReadMode = false;
+            jsonData.put(data, buffer.toString());
+            buffer = new StringBuffer();
+        }
         if (mod == 11 && processBlock != true && StringReadMode != true) {
             data = buffer.toString();
             buffer = new StringBuffer();
         }
-        // if (StringReadMode == true && processBlock != true) {
-        //     StringReadMode = false;
-        // }
-        // if (mod == 5 && processBlock == false && arrayProcessBlock == false) {
-        //     StringReadMode = true;
-        // }
         mod = 6;
         if (processBlock == true) {
             buffer.append(ch);
         }
-        // if (StringReadMode == true) {
-        //     objectData = buffer.toString();
-        //     jsonData.put(data, objectData);
-        //     buffer = new StringBuffer();
-        // }
     }
 
     public void mod7() {
